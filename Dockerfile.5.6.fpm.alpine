@@ -1,0 +1,41 @@
+FROM php:5.6-fpm-alpine
+
+LABEL maintainer="Ghostry <ghostry.green@gmail.com>"
+
+RUN set -ex \
+    && apk --no-cache add postgresql-libs postgresql-dev \
+    && docker-php-ext-install -j$(nproc) pgsql pdo pdo_pgsql \
+    && apk del postgresql-dev
+
+RUN docker-php-ext-install -j$(nproc) bcmath calendar ctype exif opcache pcntl shmop
+
+RUN curl -o ioncube.tar.gz https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
+    && tar -xvvzf ioncube.tar.gz \
+    && mv ioncube/ioncube_loader_lin_5.6.so `php-config --extension-dir` \
+    && rm -Rf ioncube.tar.gz ioncube \
+    && docker-php-ext-enable ioncube_loader_lin_5.6
+
+RUN apk add --no-cache --virtual .build-deps g++ make autoconf \
+    && pecl install -o -f redis-4.0.1 \
+    && docker-php-ext-enable redis \
+    && rm -rf /tmp/pear \
+    && apk del -f .build-deps
+
+RUN apk add --no-cache freetype libpng libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev \
+    && docker-php-ext-configure gd --with-gd --with-freetype-dir=/usr/include/ \
+        --with-png-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+    && NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) \
+    && docker-php-ext-install -j${NPROC} gd \
+    && apk del --no-cache freetype-dev libpng-dev libjpeg-turbo-dev
+
+RUN apk add --no-cache --virtual .build-deps gettext-dev \
+    && docker-php-ext-install -j$(nproc) gettext \
+    && apk del -f .build-deps
+
+RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS libzip-dev imagemagick-dev libtool \
+    && apk add --no-cache imagemagick mysql-client \
+    && pecl install imagick \
+    && docker-php-ext-enable imagick \
+    && rm -rf /tmp/pear \
+    && docker-php-ext-install -j$(nproc) pdo_mysql mysql mysqli zip \
+    && apk del -f .build-deps
