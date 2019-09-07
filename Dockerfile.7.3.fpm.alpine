@@ -1,4 +1,4 @@
-FROM php:5.6-fpm-alpine
+FROM php:7.3-fpm-alpine
 
 LABEL maintainer="Ghostry <ghostry.green@gmail.com>"
 
@@ -11,9 +11,15 @@ RUN docker-php-ext-install -j$(nproc) bcmath calendar exif opcache pcntl shmop
 
 RUN curl -o ioncube.tar.gz https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
     && tar -xvvzf ioncube.tar.gz \
-    && mv ioncube/ioncube_loader_lin_5.6.so `php-config --extension-dir` \
+    && mv ioncube/ioncube_loader_lin_7.3.so `php-config --extension-dir` \
     && rm -Rf ioncube.tar.gz ioncube \
-    && docker-php-ext-enable ioncube_loader_lin_5.6
+    && docker-php-ext-enable ioncube_loader_lin_7.3
+
+RUN apk add --no-cache --virtual .build-deps g++ make autoconf \
+    && pecl install -o -f redis-5.0.2 \
+    && docker-php-ext-enable redis \
+    && rm -rf /tmp/pear \
+    && apk del -f .build-deps
 
 RUN apk add --no-cache freetype libpng libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev \
     && docker-php-ext-configure gd --with-gd --with-freetype-dir=/usr/include/ \
@@ -27,15 +33,9 @@ RUN apk add --no-cache --virtual .build-deps gettext-dev \
     && apk del -f .build-deps
 
 RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS libzip-dev imagemagick-dev libtool \
-    && apk add --no-cache imagemagick mysql-client \
+    && apk add --no-cache imagemagick \
     && pecl install imagick \
     && docker-php-ext-enable imagick \
     && rm -rf /tmp/pear \
-    && docker-php-ext-install -j$(nproc) pdo_mysql mysql mysqli zip \
-    && apk del -f .build-deps
-
-RUN apk add --no-cache --virtual .build-deps g++ make autoconf \
-    && pecl install -o -f redis-4.3.0 \
-    && docker-php-ext-enable redis \
-    && rm -rf /tmp/pear \
+    && docker-php-ext-install -j$(nproc) pdo_mysql mysqli zip \
     && apk del -f .build-deps
