@@ -33,7 +33,7 @@ RUN apk add --no-cache --virtual .build-deps gettext-dev \
     && apk del -f .build-deps
 
 RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS libzip-dev imagemagick-dev libtool \
-    && apk add --no-cache imagemagick \
+    && apk add --no-cache imagemagick libzip \
     && pecl install imagick \
     && docker-php-ext-enable imagick \
     && rm -rf /tmp/pear \
