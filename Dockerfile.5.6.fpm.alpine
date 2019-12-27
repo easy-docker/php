@@ -45,3 +45,8 @@ RUN apk add --no-cache libmemcached-libs zlib \
     && pecl install memcached-2.2.0 \
     && docker-php-ext-enable memcached \
     && apk del -f .build-deps
+
+RUN set -ex \
+    && apk --no-cache add icu icu-dev icu-libs \
+    && docker-php-ext-install -j$(nproc) intl \
+    && apk del icu-dev
