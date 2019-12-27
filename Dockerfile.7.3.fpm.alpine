@@ -52,3 +52,5 @@ RUN docker-php-source extract \
     && docker-php-ext-enable apcu \
     && apk del .phpize-deps-configure \
     && docker-php-source delete
+
+RUN docker-php-ext-install -j$(nproc) intl
