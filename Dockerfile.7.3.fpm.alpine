@@ -53,4 +53,7 @@ RUN docker-php-source extract \
     && apk del .phpize-deps-configure \
     && docker-php-source delete
 
-RUN docker-php-ext-install -j$(nproc) intl
+RUN set -ex \
+    && apk --no-cache add icu icu-dev icu-libs \
+    && docker-php-ext-install -j$(nproc) intl \
+    && apk del icu-dev
