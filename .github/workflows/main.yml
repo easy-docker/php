@@ -26,7 +26,10 @@ jobs:
         run: |
           docker build -f Dockerfile.7.2.apache -t ${{ env.IMAGE_NAME }}:7.2-apache .
           docker push ${{ env.IMAGE_NAME }}:7.2-apache
-
+          
+          docker build -f Dockerfile.7.3.apache -t ${{ env.IMAGE_NAME }}:7.3-apache .
+          docker push ${{ env.IMAGE_NAME }}:7.3-apache
+          
           docker build -f Dockerfile.5.6.fpm.alpine -t ${{ env.IMAGE_NAME }}:5.6-fpm-alpine .
           docker push ${{ env.IMAGE_NAME }}:5.6-fpm-alpine
 
