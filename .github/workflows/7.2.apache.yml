@@ -1,4 +1,4 @@
-name: Publish Docker image
+name: Publish 7.2.apache
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  push_7_2_apache_to_registry:
+  push_to_registry:
     runs-on: ubuntu-latest
     steps:
       - name: get_image_name
