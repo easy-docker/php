@@ -35,3 +35,6 @@ jobs:
 
           docker build -f Dockerfile.7.3.fpm.alpine -t ${{ env.IMAGE_NAME }}:7.3-fpm-alpine .
           docker push ${{ env.IMAGE_NAME }}:7.3-fpm-alpine
+
+          docker build -f Dockerfile.7.3.ng -t ${{ env.IMAGE_NAME }}:7.3-ng .
+          docker push ${{ env.IMAGE_NAME }}:7.3-ng
