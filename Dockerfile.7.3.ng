@@ -38,4 +38,8 @@ RUN apt-get update \
     && rm -r /var/lib/apt/lists/* \
     && docker-php-ext-install pgsql pdo_pgsql
 
-RUN pecl install imagick && docker-php-ext-enable imagick
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libmagickwand-dev \
+    && apt-get clean \
+    && rm -r /var/lib/apt/lists/* \
+    && pecl install imagick && docker-php-ext-enable imagick
