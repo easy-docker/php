@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  push_to_registry:
+  push_7_2_apache_to_registry:
     runs-on: ubuntu-latest
     steps:
       - name: get_image_name
