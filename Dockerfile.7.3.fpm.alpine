@@ -16,7 +16,7 @@ RUN curl -o ioncube.tar.gz https://downloads.ioncube.com/loader_downloads/ioncub
     && docker-php-ext-enable ioncube_loader_lin_7.3
 
 RUN apk add --no-cache --virtual .build-deps g++ make autoconf \
-    && pecl install -o -f redis-5.0.2 \
+    && pecl install -o -f redis-5.3.7 \
     && docker-php-ext-enable redis \
     && rm -rf /tmp/pear \
     && apk del -f .build-deps
