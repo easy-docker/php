@@ -1,7 +1,7 @@
 # 使用官方 PHP 镜像作为基础镜像
 FROM php:8.1-fpm
 # 安装系统依赖和 Nginx
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     nginx \
     git \
     curl \
@@ -13,7 +13,9 @@ RUN apt-get update && apt-get install -y \
     zip \
     nano \
     libjpeg-dev libfreetype6-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && apt-get autoremove && apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install \
         pdo_mysql \
         mbstring \
@@ -22,8 +24,8 @@ RUN apt-get update && apt-get install -y \
         bcmath \
         gd \
         opcache \
-        zip
-RUN pecl install redis-5.3.7 && docker-php-ext-enable redis
+        zip \
+    && pecl install redis-5.3.7 && docker-php-ext-enable redis
 
 # 安装 Composer
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
