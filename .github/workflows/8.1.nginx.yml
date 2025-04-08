@@ -31,5 +31,5 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Push to Docker Hub
         run: |
-          docker build -f Dockerfile.8.1.nginx -t ${{ env.IMAGE_NAME }}:8.1.nginx .
-          docker push ${{ env.IMAGE_NAME }}:8.1.nginx
+          docker build -f Dockerfile.8.1.nginx -t ${{ env.IMAGE_NAME }}:8.1-nginx .
+          docker push ${{ env.IMAGE_NAME }}:8.1-nginx
