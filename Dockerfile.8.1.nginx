@@ -1,0 +1,59 @@
+# 使用官方 PHP 镜像作为基础镜像
+FROM dockercache.ng8866.com/library/php:8.1-fpm
+# 安装系统依赖和 Nginx
+RUN apt-get update && apt-get install -y \
+    nginx \
+    git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    libzip-dev \
+    unzip \
+    zip \
+    nano \
+    libjpeg-dev libfreetype6-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install \
+        pdo_mysql \
+        mbstring \
+        exif \
+        pcntl \
+        bcmath \
+        gd \
+        opcache \
+        zip
+RUN pecl install redis-5.3.7 && docker-php-ext-enable redis
+
+# 安装 Composer
+COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
+
+# 设置环境变量
+ENV COMPOSER_ALLOW_SUPERUSER=1
+ENV COMPOSER_NO_DEV=0
+
+# 设置工作目录
+WORKDIR /data
+
+# 暴露端口
+ARG PORT=9001
+ENV PORT=${PORT}
+EXPOSE ${PORT}
+
+# 移除默认的 Nginx 配置
+RUN rm -f /etc/nginx/sites-enabled/default
+# 配置 Nginx
+RUN mkdir -p /etc/nginx/sites-available /etc/nginx/sites-enabled
+COPY 8.1.nginx/nginx.conf /etc/nginx/sites-available/default
+RUN ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
+
+
+# 启动脚本
+COPY 8.1.nginx/start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
+
+# 设置权限
+RUN chown -R www-data:www-data /data
+
+# 设置启动命令
+CMD ["start.sh"]
