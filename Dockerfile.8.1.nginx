@@ -39,8 +39,11 @@ WORKDIR /data
 
 # 暴露端口
 ARG PORT=9001
+ARG PHPPORT=9002
 ENV PORT=${PORT}
+ENV PHPPORT=${PHPPORT}
 EXPOSE ${PORT}
+EXPOSE ${PHPPORT}
 
 # 移除默认的 Nginx 配置
 RUN rm -f /etc/nginx/sites-enabled/default
