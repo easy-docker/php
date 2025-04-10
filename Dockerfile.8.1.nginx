@@ -46,7 +46,8 @@ EXPOSE ${PORT}
 EXPOSE ${PHPPORT}
 
 # 移除默认的 Nginx 配置
-RUN rm -f /etc/nginx/sites-enabled/default
+RUN rm -f /etc/nginx/sites-enabled/default \
+    && rm -f /usr/local/etc/php-fpm.d/zz-docker.conf
 # 配置 Nginx
 RUN mkdir -p /etc/nginx/sites-available /etc/nginx/sites-enabled
 COPY 8.1.nginx/nginx.conf /etc/nginx/sites-available/default
