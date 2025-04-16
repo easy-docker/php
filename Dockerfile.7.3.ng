@@ -27,10 +27,10 @@ RUN curl -o ioncube.tar.gz https://downloads.ioncube.com/loader_downloads/ioncub
     && docker-php-ext-enable ioncube_loader_lin_7.3
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends libbz2-dev \
+    && apt-get install -y --no-install-recommends libbz2-dev libzip-dev zip \
     && apt-get clean \
     && rm -r /var/lib/apt/lists/* \
-    && docker-php-ext-install -j$(nproc) bz2
+    && docker-php-ext-install -j$(nproc) bz2 zip
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends libpq-dev \
