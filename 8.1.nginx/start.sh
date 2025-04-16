@@ -6,6 +6,10 @@ sed -i "s/\${PHPPORT}/${PHPPORT}/g" /etc/nginx/sites-available/default
 sed -i -E 's/(listen = 127.0.0.1:)[0-9]+/\1'"${PHPPORT}"'/' /usr/local/etc/php-fpm.d/www.conf
 echo 'upload_max_filesize = 100M'>>/usr/local/etc/php/conf.d/docker-fpm.ini
 echo 'post_max_size = 100M'>>/usr/local/etc/php/conf.d/docker-fpm.ini
+echo 'request_terminate_timeout = 300s'>>/usr/local/etc/php/conf.d/docker-fpm.ini
+echo 'max_execution_time = 300'>>/usr/local/etc/php/conf.d/docker-fpm.ini
+echo 'max_input_time = 300'>>/usr/local/etc/php/conf.d/docker-fpm.ini
+echo 'memory_limit = 256M'>>/usr/local/etc/php/conf.d/docker-fpm.ini
 chown -R www-data:www-data /data
 # 启动 PHP-FPM 和 Nginx
 php-fpm &
