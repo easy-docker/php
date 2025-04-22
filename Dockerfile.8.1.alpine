@@ -16,8 +16,7 @@ RUN apk update && apk add --no-cache \
     tzdata \
     libwebp-dev \
     g++ \
-    musl-dev
-    # PHP 扩展编译依赖
+    musl-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install \
         pdo_mysql \
