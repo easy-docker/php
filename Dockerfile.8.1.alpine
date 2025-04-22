@@ -1,7 +1,12 @@
 FROM php:8.1-alpine
 
-# 安装系统依赖（已移除 nginx）
+# 安装编译工具链
 RUN apk update && apk add --no-cache \
+    autoconf \
+    m4 \
+    musl-dev \
+    g++ \
+    make \
     git \
     curl \
     libpng-dev \
@@ -15,9 +20,10 @@ RUN apk update && apk add --no-cache \
     freetype-dev \
     tzdata \
     libwebp-dev \
-    g++ \
-    musl-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && rm -rf /var/cache/apk/*
+
+# 配置并安装 PHP 扩展
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install \
         pdo_mysql \
         mbstring \
@@ -29,7 +35,7 @@ RUN apk update && apk add --no-cache \
         zip \
     && pecl install redis-5.3.7 \
     && docker-php-ext-enable redis \
-    && apk del --purge libpng-dev libonig-dev libxml2-dev libzip-dev libjpeg-turbo-dev freetype-dev \
+    && apk del --purge libpng-dev libjpeg-turbo-dev freetype-dev \
     && rm -rf /var/cache/apk/*
 
 # 安装 Composer
@@ -39,7 +45,7 @@ COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 ENV COMPOSER_ALLOW_SUPERUSER=1
 ENV COMPOSER_NO_DEV=0
 
-# 创建无限循环的启动脚本
+# 创建启动脚本
 RUN echo '#!/bin/sh' > /start.sh && \
     echo 'while :; do sleep 3600; done' >> /start.sh && \
     chmod +x /start.sh
